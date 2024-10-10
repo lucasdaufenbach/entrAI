@@ -1,1 +1,1 @@
-# entrAI
+# EntrAI
