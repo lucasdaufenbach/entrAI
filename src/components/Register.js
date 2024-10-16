@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';  
 import { useNavigate } from 'react-router-dom'; // Importa o hook useNavigate para navegação
 import authService from '../authServices';
 import './Register.css';
@@ -10,7 +10,13 @@ const Register = () => {
   const navigate = useNavigate(); // useNavigate para redirecionar
 
   const handleRegister = () => {
+    // Simulação de chamada ao authService
     authService.register(email, password);
+
+    // Salvando os dados no localStorage
+    localStorage.setItem('registeredEmail', email);
+    localStorage.setItem('registeredPassword', password);
+
     setSuccess('Cadastro realizado com sucesso!');
     setEmail('');
     setPassword('');

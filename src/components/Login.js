@@ -11,8 +11,12 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Simulação de verificação de login
-    if (email === 'user@example.com' && password === 'password123') {
+    // Pegando o e-mail e a senha cadastrados do localStorage
+    const registeredEmail = localStorage.getItem('registeredEmail');
+    const registeredPassword = localStorage.getItem('registeredPassword');
+
+    // Verificando se o e-mail e a senha correspondem ao que foi cadastrado
+    if (email === registeredEmail && password === registeredPassword) {
       navigate('/Dashboard'); // Redireciona para o Dashboard
     } else {
       setErrorMessage('Email ou senha inválidos.');
@@ -26,7 +30,7 @@ const Login = () => {
   return (
     <div className="center">
       <div className="container">
-        <h2>Login</h2>
+        <h2>Bem Vindo ao EntrAI</h2>
         {errorMessage && <p className="alert">{errorMessage}</p>}
         <form onSubmit={handleLogin}>
           <input
