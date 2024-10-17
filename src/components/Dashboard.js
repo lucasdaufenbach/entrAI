@@ -5,6 +5,11 @@ import './Dashboard.css';
 const Dashboard = () => {
   const navigate = useNavigate();
 
+  // Estados de visibilidade para os formulários
+  const [showSchoolForm, setShowSchoolForm] = useState(false);
+  const [showClassroomForm, setShowClassroomForm] = useState(false);
+  const [showPersonForm, setShowPersonForm] = useState(false);
+
   // Estados para controle do formulário de escola
   const [school, setSchool] = useState({
     name: '',
@@ -17,7 +22,9 @@ const Dashboard = () => {
     courses: []
   });
 
-  const [newCourse, setNewCourse] = useState(''); // Novo curso a ser adicionado
+  const [newCourse, setNewCourse] = useState(''); // Novo curso a ser adicionado temporariamente
+  const [tempCourses, setTempCourses] = useState([]); // Cursos temporários antes do cadastro final
+
   const [classroom, setClassroom] = useState({
     number: '',
     studentCount: '',
@@ -38,6 +45,7 @@ const Dashboard = () => {
 
   const [schools, setSchools] = useState([]); // Lista de escolas cadastradas
   const [courses, setCourses] = useState([]); // Lista de cursos filtrada pela escola selecionada
+  const [classrooms, setClassrooms] = useState([]); // Lista de turmas filtrada pela escola e curso selecionado
 
   // Carregar as escolas cadastradas ao iniciar
   useEffect(() => {
@@ -50,10 +58,10 @@ const Dashboard = () => {
     setSchool({ ...school, [e.target.name]: e.target.value });
   };
 
-  // Função para adicionar um novo curso à lista de cursos da escola
+  // Função para adicionar um novo curso temporário à lista de cursos
   const handleAddCourse = () => {
-    if (newCourse && !school.courses.includes(newCourse)) {
-      setSchool({ ...school, courses: [...school.courses, newCourse] });
+    if (newCourse && !tempCourses.includes(newCourse)) {
+      setTempCourses([...tempCourses, newCourse]);
       setNewCourse(''); // Limpar o campo do curso
     }
   };
@@ -62,16 +70,17 @@ const Dashboard = () => {
   const handleSchoolSubmit = (e) => {
     e.preventDefault();
 
+    const schoolWithCourses = { ...school, courses: tempCourses }; // Adiciona os cursos temporários à escola
     const reports = JSON.parse(localStorage.getItem('reports')) || [];
-    reports.push({ school });
+    reports.push({ school: schoolWithCourses });
 
     // Atualiza o localStorage e o estado de escolas
     localStorage.setItem('reports', JSON.stringify(reports));
-    setSchools([...schools, school]); // Adiciona a nova escola à lista de escolas
+    setSchools([...schools, schoolWithCourses]); // Adiciona a nova escola à lista de escolas
 
-    console.log('Escola cadastrada com sucesso!', school);
+    console.log('Escola cadastrada com sucesso!', schoolWithCourses);
 
-    // Limpar campos da escola
+    // Limpar campos da escola e lista de cursos temporários
     setSchool({
       name: '',
       address: '',
@@ -82,6 +91,7 @@ const Dashboard = () => {
       classroomCount: '',
       courses: []
     });
+    setTempCourses([]); // Limpar cursos temporários
   };
 
   // Função para lidar com mudanças nos campos da turma
@@ -126,6 +136,19 @@ const Dashboard = () => {
     setPerson({ ...person, [e.target.name]: e.target.value });
   };
 
+  // Filtrar turmas com base na escola e curso selecionados
+  const handleCourseSelect = (e) => {
+    const selectedCourse = e.target.value;
+    setPerson({ ...person, course: selectedCourse });
+
+    const reports = JSON.parse(localStorage.getItem('reports')) || [];
+    const filteredClassrooms = reports
+      .filter((report) => report.classroom && report.classroom.selectedSchool === person.school && report.classroom.course === selectedCourse)
+      .map((report) => report.classroom);
+
+    setClassrooms(filteredClassrooms); // Atualiza as turmas com base na escola e curso selecionados
+  };
+
   // Função para cadastrar o aluno
   const handlePersonSubmit = (e) => {
     e.preventDefault();
@@ -156,243 +179,222 @@ const Dashboard = () => {
         <div className="container">
           <h2>Cadastro de Escolas, Turmas e Alunos</h2>
 
-          {/* Box de cadastro de escola */}
-          <div className="box">
-            <h3>Cadastro de Escola</h3>
-            <form onSubmit={handleSchoolSubmit}>
-              <input
-                type="text"
-                name="name"
-                placeholder="Nome da Escola"
-                value={school.name}
-                onChange={handleSchoolChange}
-                required
-              />
-              <input
-                type="text"
-                name="address"
-                placeholder="Endereço"
-                value={school.address}
-                onChange={handleSchoolChange}
-                required
-              />
-              <input
-                type="text"
-                name="number"
-                placeholder="Número"
-                value={school.number}
-                onChange={handleSchoolChange}
-                required
-              />
-              <input
-                type="text"
-                name="cnpj"
-                placeholder="CNPJ"
-                value={school.cnpj}
-                onChange={handleSchoolChange}
-                required
-              />
-              <input
-                type="number"
-                name="studentCount"
-                placeholder="Quantidade de Alunos"
-                value={school.studentCount}
-                onChange={handleSchoolChange}
-                required
-              />
-              <input
-                type="number"
-                name="foundationYear"
-                placeholder="Ano de Fundação"
-                value={school.foundationYear}
-                onChange={handleSchoolChange}
-                required
-              />
-              <input
-                type="number"
-                name="classroomCount"
-                placeholder="Quantidade de Turmas"
-                value={school.classroomCount}
-                onChange={handleSchoolChange}
-                required
-              />
-
-              {/* Campo para adicionar cursos */}
-              <div className="courses">
-                <h4>Cursos</h4>
+          {/* Toggle para Cadastro de Escola */}
+          <button onClick={() => setShowSchoolForm(!showSchoolForm)}>
+            {showSchoolForm ? 'Fechar Cadastro de Escola' : 'Abrir Cadastro de Escola'}
+          </button>
+          {showSchoolForm && (
+            <div className="box">
+              <h3>Cadastro de Escola</h3>
+              <form onSubmit={handleSchoolSubmit}>
+                <label htmlFor="name">Nome da Escola</label>
                 <input
                   type="text"
-                  placeholder="Nome do Curso"
+                  name="name"
+                  placeholder="Insira o nome da escola"
+                  value={school.name}
+                  onChange={handleSchoolChange}
+                  required
+                />
+                <label htmlFor="address">Endereço</label>
+                <input
+                  type="text"
+                  name="address"
+                  placeholder="Endereço"
+                  value={school.address}
+                  onChange={handleSchoolChange}
+                  required
+                />
+                <label htmlFor="number">Número</label>
+                <input
+                  type="text"
+                  name="number"
+                  placeholder="Número"
+                  value={school.number}
+                  onChange={handleSchoolChange}
+                  required
+                />
+                <label htmlFor="cnpj">CNPJ</label>
+                <input
+                  type="text"
+                  name="cnpj"
+                  placeholder="CNPJ"
+                  value={school.cnpj}
+                  onChange={handleSchoolChange}
+                  required
+                />
+                <label htmlFor="studentCount">Número de Estudantes</label>
+                <input
+                  type="number"
+                  name="studentCount"
+                  placeholder="Quantidade de estudantes"
+                  value={school.studentCount}
+                  onChange={handleSchoolChange}
+                  required
+                />
+                <label htmlFor="foundationYear">Ano de Fundação</label>
+                <input
+                  type="text"
+                  name="foundationYear"
+                  placeholder="Ano de Fundação"
+                  value={school.foundationYear}
+                  onChange={handleSchoolChange}
+                  required
+                />
+                <label htmlFor="classroomCount">Número de Salas</label>
+                <input
+                  type="number"
+                  name="classroomCount"
+                  placeholder="Número de salas"
+                  value={school.classroomCount}
+                  onChange={handleSchoolChange}
+                  required
+                />
+                <label htmlFor="courses">Cursos</label>
+                <input
+                  type="text"
+                  name="courses"
+                  placeholder="Adicionar novo curso"
                   value={newCourse}
                   onChange={(e) => setNewCourse(e.target.value)}
                 />
                 <button type="button" onClick={handleAddCourse}>Adicionar Curso</button>
-
                 <ul>
-                  {school.courses.map((course, index) => (
+                  {tempCourses.map((course, index) => (
                     <li key={index}>{course}</li>
                   ))}
                 </ul>
-              </div>
+                <button type="submit">Cadastrar Escola</button>
+              </form>
+            </div>
+          )}
 
-              <button type="submit">Cadastrar Escola</button>
-            </form>
-          </div>
-
-          {/* Box de cadastro de turma */}
-          <div className="box">
-            <h3>Cadastro de Turma</h3>
-            <form onSubmit={handleClassroomSubmit}>
-              <input
-                type="text"
-                name="number"
-                placeholder="Número da Turma"
-                value={classroom.number}
-                onChange={handleClassroomChange}
-                required
-              />
-              <input
-                type="number"
-                name="studentCount"
-                placeholder="Quantidade de Alunos"
-                value={classroom.studentCount}
-                onChange={handleClassroomChange}
-                required
-              />
-              <input
-                type="text"
-                name="location"
-                placeholder="Local"
-                value={classroom.location}
-                onChange={handleClassroomChange}
-                required
-              />
-
-              {/* Seleção de escola via dropdown */}
-              <div className="school-selection">
-                <h4>Selecionar Escola</h4>
-                <select
-                  name="selectedSchool"
-                  value={classroom.selectedSchool}
-                  onChange={handleSchoolSelect}
-                  required
-                >
-                  <option value="">Selecione uma escola</option>
+          {/* Toggle para Cadastro de Turma */}
+          <button onClick={() => setShowClassroomForm(!showClassroomForm)}>
+            {showClassroomForm ? 'Fechar Cadastro de Turma' : 'Abrir Cadastro de Turma'}
+          </button>
+          {showClassroomForm && (
+            <div className="box">
+              <h3>Cadastro de Turma</h3>
+              <form onSubmit={handleClassroomSubmit}>
+                <label htmlFor="selectedSchool">Selecione a Escola</label>
+                <select name="selectedSchool" value={classroom.selectedSchool} onChange={handleSchoolSelect} required>
+                  <option value="">Escolha uma escola</option>
                   {schools.map((school, index) => (
                     <option key={index} value={school.name}>
                       {school.name}
                     </option>
                   ))}
                 </select>
-              </div>
-
-              {/* Seleção de cursos dependente da escola */}
-              <div className="course-selection">
-                <h4>Selecionar Curso</h4>
-                <select
-                  name="course"
-                  value={classroom.course}
+                <label htmlFor="number">Número da Sala</label>
+                <input
+                  type="text"
+                  name="number"
+                  placeholder="Número da sala"
+                  value={classroom.number}
                   onChange={handleClassroomChange}
                   required
-                  disabled={!classroom.selectedSchool}
-                >
-                  <option value="">Selecione um curso</option>
+                />
+                <label htmlFor="studentCount">Número de Estudantes</label>
+                <input
+                  type="number"
+                  name="studentCount"
+                  placeholder="Quantidade de estudantes"
+                  value={classroom.studentCount}
+                  onChange={handleClassroomChange}
+                  required
+                />
+                <label htmlFor="location">Localização</label>
+                <input
+                  type="text"
+                  name="location"
+                  placeholder="Localização"
+                  value={classroom.location}
+                  onChange={handleClassroomChange}
+                  required
+                />
+                <label htmlFor="course">Selecione o Curso</label>
+                <select name="course" value={classroom.course} onChange={handleClassroomChange} required>
+                  <option value="">Escolha um curso</option>
                   {courses.map((course, index) => (
                     <option key={index} value={course}>
                       {course}
                     </option>
                   ))}
                 </select>
-              </div>
+                <button type="submit">Cadastrar Turma</button>
+              </form>
+            </div>
+          )}
 
-              <button type="submit">Cadastrar Turma</button>
-            </form>
-          </div>
-
-          {/* Box de cadastro de aluno */}
-          <div className="box">
-            <h3>Cadastro de Aluno</h3>
-            <form onSubmit={handlePersonSubmit}>
-              <input
-                type="text"
-                name="name"
-                placeholder="Nome do Aluno"
-                value={person.name}
-                onChange={handlePersonChange}
-                required
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="E-mail do Aluno"
-                value={person.email}
-                onChange={handlePersonChange}
-                required
-              />
-              <input
-                type="date"
-                name="birthDate"
-                placeholder="Data de Nascimento"
-                value={person.birthDate}
-                onChange={handlePersonChange}
-                required
-              />
-
-              {/* Seleção de escola */}
-              <div className="school-selection">
-                <h4>Selecionar Escola</h4>
-                <select
-                  name="school"
-                  value={person.school}
-                  onChange={handleSchoolSelect}
+          {/* Toggle para Cadastro de Aluno */}
+          <button onClick={() => setShowPersonForm(!showPersonForm)}>
+            {showPersonForm ? 'Fechar Cadastro de Aluno' : 'Abrir Cadastro de Aluno'}
+          </button>
+          {showPersonForm && (
+            <div className="box">
+              <h3>Cadastro de Aluno</h3>
+              <form onSubmit={handlePersonSubmit}>
+                <label htmlFor="name">Nome do Aluno</label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Insira o nome do aluno"
+                  value={person.name}
+                  onChange={handlePersonChange}
                   required
-                >
-                  <option value="">Selecione uma escola</option>
+                />
+                <label htmlFor="email">Email do Aluno</label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Insira o email do aluno"
+                  value={person.email}
+                  onChange={handlePersonChange}
+                  required
+                />
+                <label htmlFor="birthDate">Data de Nascimento</label>
+                <input
+                  type="date"
+                  name="birthDate"
+                  placeholder="Insira a data de nascimento"
+                  value={person.birthDate}
+                  onChange={handlePersonChange}
+                  required
+                />
+                <label htmlFor="school">Selecione a Escola</label>
+                <select name="school" value={person.school} onChange={handleSchoolSelect} required>
+                  <option value="">Escolha uma escola</option>
                   {schools.map((school, index) => (
                     <option key={index} value={school.name}>
                       {school.name}
                     </option>
                   ))}
                 </select>
-              </div>
-
-              {/* Seleção de curso dependente da escola */}
-              <div className="course-selection">
-                <h4>Selecionar Curso</h4>
-                <select
-                  name="course"
-                  value={person.course}
-                  onChange={handlePersonChange}
-                  required
-                  disabled={!person.school}
-                >
-                  <option value="">Selecione um curso</option>
+                <label htmlFor="course">Selecione o Curso</label>
+                <select name="course" value={person.course} onChange={handleCourseSelect} required>
+                  <option value="">Escolha um curso</option>
                   {courses.map((course, index) => (
                     <option key={index} value={course}>
                       {course}
                     </option>
                   ))}
                 </select>
-              </div>
+                <label htmlFor="classroom">Selecione a Sala</label>
+                <select name="classroom" value={person.classroom} onChange={handlePersonChange} required>
+                  <option value="">Escolha uma sala</option>
+                  {classrooms.map((classroom, index) => (
+                    <option key={index} value={classroom.number}>
+                      {classroom.number}
+                    </option>
+                  ))}
+                </select>
+                <button type="submit">Cadastrar Aluno</button>
+              </form>
+            </div>
+          )}
 
-              {/* Seleção de número da turma */}
-              <input
-                type="text"
-                name="classroom"
-                placeholder="Número da Turma"
-                value={person.classroom}
-                onChange={handlePersonChange}
-                required
-              />
-
-              <button type="submit">Cadastrar Aluno</button>
-            </form>
-          </div>
-
-          {/* Botão de logout */}
-          <div className="box">
-            <button onClick={handleLogout}>Sair</button>
-          </div>
+          <button onClick={handleLogout}>Sair</button>
         </div>
       </div>
     </div>
