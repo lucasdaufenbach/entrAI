@@ -1,45 +1,180 @@
 /* Dashboard.css */
 body {
-    background-color: #f4f4f9;
-  }
-  
-  .container {
-    background-color: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 600px;
-    max-width: 95%;
-    margin: auto;
-  }
-  
-  h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #444;
-  }
-  
-  input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    font-size: 16px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
-  
-  button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 15px;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
+  background-color: #f4f4f9;
+}
+
+.container {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 600px;
+  max-width: 95%;
+  margin: auto;
+  display: flex;   
+  flex-direction: column;
+  justify-content: center;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  margin-left: 42%;
+  color: #444;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+input:focus {
+  outline: none;                                                  /* Remove o contorno padrão ao focar */
+  border-color: #007BFF;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.inputForm {
+  width: 96%;
+}
+
+.buttonTerceario {
+  width: 10%;
+  padding: 10px;
+  background-color: white;
+  color: #007BFF;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 6px;
+  margin-left: 45%;
+}
+
+.buttonFacial {
+  width: 30%;
+  padding: 10px;
+  background-color: white;
+  color: #007BFF;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: auto;
+}
+
+.buttonSecundario {
+  width: 100%;
+  padding: 10px;
+  background-color: white;
+  color: #007BFF;
+  border: 1px solid #007BFF;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.buttonPrimario {
+  width: 100%;
+  padding: 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+button:hover {
+  transform: scale(1.01);                       /* Aumenta o tamanho em 0,1 */
+  transition: transform 0.2s ease;
+}
+
+.buttonTerceario:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.btCadastroEscola {
+  display: flex;                                /* Ativa o flexbox */
+  align-items: center;                          /* Alinha verticalmente os itens ao centro */
+  margin-bottom: 50px;                          /* Adiciona uma margem de 20px abaixo do contêiner */
+}
+
+.btCadastrarDosForm {
+  margin-bottom: 50px;                          /* Adiciona uma margem de 20px abaixo do contêiner */
+  width: 100%;
+  padding: 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+select {
+  width: 100%;                                  /*gambiarra, nao alterar */
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+  color: #868686;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  appearance: none;
+  background-color: white
+}
+
+select::-ms-expand {
+  display: none;                                /* Oculta a seta padrão do select */
+}
+
+select:focus {
+  outline: none;                                /* Remove o contorno padrão ao focar */
+  border-color: #007BFF;                      
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}
+
+/* campo de upload de imagem */
+.upload[type="file"] {
+width: 96%;                                     /*gambiarra, nao alterar */
+padding: 10px;
+margin: 10px 0;
+font-size: 16px;
+color: #868686;
+border-radius: 4px;
+border: 1px solid #ccc;
+background-color: white;
+cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+padding: 8px;
+margin-right: 16px;
+background-color: white;
+color: #0169d8;
+border: 1px solid #868686;
+border-radius: 4px;
+cursor: pointer;
+border-color: #007BFF;                       /* Cor de borda ao focar */
+}
+
+input[type="date"] {
+width: 96%;                                     /*gambiarra, nao alterar */
+padding: 10px; 
+margin: 10px 0;
+font-size: 16px;                               
+border: 1px solid #ccc;                      
+color: #868686;                              
+background-color: white;                    
+appearance: none;                              /* Remove o estilo padrão dos navegadores */
+}
+
+input[type="date"]:focus {
+border-color: #007BFF;                       
+box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);  
+outline: none;                                 /* Remove o contorno padrão */
+}
+

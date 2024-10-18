@@ -4,6 +4,9 @@ import './Dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const handleNavigateToFacialRecognition = () => {
+    navigate('/reconhecimento-facial');
+  };
 
   // Estados de visibilidade para os formulários
   const [showSchoolForm, setShowSchoolForm] = useState(false);
@@ -53,12 +56,12 @@ const Dashboard = () => {
     setSchools(savedSchools.map((report) => report.school).filter(Boolean));
   }, []);
 
-  // Função para lidar com mudanças nos campos da escola
+  // lidar com mudanças nos campos da escola
   const handleSchoolChange = (e) => {
     setSchool({ ...school, [e.target.name]: e.target.value });
   };
 
-  // Função para adicionar um novo curso temporário à lista de cursos
+  // adicionar um novo curso temporário à lista de cursos
   const handleAddCourse = () => {
     if (newCourse && !tempCourses.includes(newCourse)) {
       setTempCourses([...tempCourses, newCourse]);
@@ -66,7 +69,7 @@ const Dashboard = () => {
     }
   };
 
-  // Função para cadastrar a escola
+  // cadastrar a escola
   const handleSchoolSubmit = (e) => {
     e.preventDefault();
 
@@ -94,12 +97,12 @@ const Dashboard = () => {
     setTempCourses([]); // Limpar cursos temporários
   };
 
-  // Função para lidar com mudanças nos campos da turma
+  // lidar com mudanças nos campos da turma
   const handleClassroomChange = (e) => {
     setClassroom({ ...classroom, [e.target.name]: e.target.value });
   };
 
-  // Função para lidar com a seleção de uma escola
+  // lidar com a seleção de uma escola
   const handleSchoolSelect = (e) => {
     const selectedSchool = e.target.value;
     setClassroom({ ...classroom, selectedSchool });
@@ -112,7 +115,7 @@ const Dashboard = () => {
     }
   };
 
-  // Função para cadastrar a turma
+  // cadastrar a turma
   const handleClassroomSubmit = (e) => {
     e.preventDefault();
 
@@ -131,7 +134,7 @@ const Dashboard = () => {
     });
   };
 
-  // Função para lidar com mudanças nos campos de aluno
+  // lidar com mudanças nos campos de aluno
   const handlePersonChange = (e) => {
     setPerson({ ...person, [e.target.name]: e.target.value });
   };
@@ -149,7 +152,7 @@ const Dashboard = () => {
     setClassrooms(filteredClassrooms); // Atualiza as turmas com base na escola e curso selecionados
   };
 
-  // Função para cadastrar o aluno
+  // cadastrar o aluno
   const handlePersonSubmit = (e) => {
     e.preventDefault();
 
@@ -173,14 +176,22 @@ const Dashboard = () => {
     navigate('/');
   };
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0]; // Obtém o primeiro arquivo selecionado
+    if (file) {
+      // pode armazenar o arquivo no estado ou enviá-lo para um servidor
+      console.log("Arquivo selecionado:", file);
+    }
+  };
+
   return (
     <div>
       <div className="center">
         <div className="container">
-          <h2>Cadastro de Escolas, Turmas e Alunos</h2>
+          <h2>Cadastro</h2>
 
-          {/* Toggle para Cadastro de Escola */}
-          <button onClick={() => setShowSchoolForm(!showSchoolForm)}>
+          {/*Cadastro de Escola */}
+          <button class="buttonSecundario" onClick={() => setShowSchoolForm(!showSchoolForm)}>
             {showSchoolForm ? 'Fechar Cadastro de Escola' : 'Abrir Cadastro de Escola'}
           </button>
           {showSchoolForm && (
@@ -189,6 +200,7 @@ const Dashboard = () => {
               <form onSubmit={handleSchoolSubmit}>
                 <label htmlFor="name">Nome da Escola</label>
                 <input
+                  class="inputForm"
                   type="text"
                   name="name"
                   placeholder="Insira o nome da escola"
@@ -198,6 +210,7 @@ const Dashboard = () => {
                 />
                 <label htmlFor="address">Endereço</label>
                 <input
+                  class="inputForm"
                   type="text"
                   name="address"
                   placeholder="Endereço"
@@ -207,6 +220,7 @@ const Dashboard = () => {
                 />
                 <label htmlFor="number">Número</label>
                 <input
+                  class="inputForm"
                   type="text"
                   name="number"
                   placeholder="Número"
@@ -216,6 +230,7 @@ const Dashboard = () => {
                 />
                 <label htmlFor="cnpj">CNPJ</label>
                 <input
+                  class="inputForm"
                   type="text"
                   name="cnpj"
                   placeholder="CNPJ"
@@ -225,6 +240,7 @@ const Dashboard = () => {
                 />
                 <label htmlFor="studentCount">Número de Estudantes</label>
                 <input
+                  class="inputForm"
                   type="number"
                   name="studentCount"
                   placeholder="Quantidade de estudantes"
@@ -234,6 +250,7 @@ const Dashboard = () => {
                 />
                 <label htmlFor="foundationYear">Ano de Fundação</label>
                 <input
+                  class="inputForm"
                   type="text"
                   name="foundationYear"
                   placeholder="Ano de Fundação"
@@ -243,6 +260,7 @@ const Dashboard = () => {
                 />
                 <label htmlFor="classroomCount">Número de Salas</label>
                 <input
+                  class="inputForm"
                   type="number"
                   name="classroomCount"
                   placeholder="Número de salas"
@@ -252,32 +270,36 @@ const Dashboard = () => {
                 />
                 <label htmlFor="courses">Cursos</label>
                 <input
+                  class="inputForm"
                   type="text"
                   name="courses"
                   placeholder="Adicionar novo curso"
                   value={newCourse}
                   onChange={(e) => setNewCourse(e.target.value)}
                 />
-                <button type="button" onClick={handleAddCourse}>Adicionar Curso</button>
-                <ul>
-                  {tempCourses.map((course, index) => (
-                    <li key={index}>{course}</li>
-                  ))}
-                </ul>
-                <button type="submit">Cadastrar Escola</button>
+                <div class="btCadastroEscola">
+                  <button class="buttonPrimario" type="button" onClick={handleAddCourse}>Adicionar Curso</button>
+                  <ul>
+                    {tempCourses.map((course, index) => (
+                      <li key={index}>{course}</li>
+                    ))}
+                  </ul>
+                  <button class="buttonPrimario" type="submit">Cadastrar Escola</button>
+                </div>
+
               </form>
             </div>
           )}
 
-          {/* Toggle para Cadastro de Turma */}
-          <button onClick={() => setShowClassroomForm(!showClassroomForm)}>
+          {/*Cadastro de Turma */}
+          <button class="buttonSecundario" onClick={() => setShowClassroomForm(!showClassroomForm)}>
             {showClassroomForm ? 'Fechar Cadastro de Turma' : 'Abrir Cadastro de Turma'}
           </button>
           {showClassroomForm && (
             <div className="box">
               <h3>Cadastro de Turma</h3>
               <form onSubmit={handleClassroomSubmit}>
-                <label htmlFor="selectedSchool">Selecione a Escola</label>
+                <label htmlFor="selectedSchool">Selecione a Escola</label> <br />
                 <select name="selectedSchool" value={classroom.selectedSchool} onChange={handleSchoolSelect} required>
                   <option value="">Escolha uma escola</option>
                   {schools.map((school, index) => (
@@ -285,9 +307,10 @@ const Dashboard = () => {
                       {school.name}
                     </option>
                   ))}
-                </select>
+                </select> <br />
                 <label htmlFor="number">Número da Sala</label>
                 <input
+                  class="inputForm"
                   type="text"
                   name="number"
                   placeholder="Número da sala"
@@ -297,6 +320,8 @@ const Dashboard = () => {
                 />
                 <label htmlFor="studentCount">Número de Estudantes</label>
                 <input
+                  class="inputForm"
+
                   type="number"
                   name="studentCount"
                   placeholder="Quantidade de estudantes"
@@ -306,6 +331,7 @@ const Dashboard = () => {
                 />
                 <label htmlFor="location">Localização</label>
                 <input
+                  class="inputForm"
                   type="text"
                   name="location"
                   placeholder="Localização"
@@ -322,13 +348,13 @@ const Dashboard = () => {
                     </option>
                   ))}
                 </select>
-                <button type="submit">Cadastrar Turma</button>
+                <button class="btCadastrarDosForm" type="submit">Cadastrar Turma</button>
               </form>
             </div>
           )}
 
-          {/* Toggle para Cadastro de Aluno */}
-          <button onClick={() => setShowPersonForm(!showPersonForm)}>
+          {/*Cadastro de Aluno */}
+          <button className="buttonSecundario" onClick={() => setShowPersonForm(!showPersonForm)}>
             {showPersonForm ? 'Fechar Cadastro de Aluno' : 'Abrir Cadastro de Aluno'}
           </button>
           {showPersonForm && (
@@ -337,6 +363,7 @@ const Dashboard = () => {
               <form onSubmit={handlePersonSubmit}>
                 <label htmlFor="name">Nome do Aluno</label>
                 <input
+                  className="inputForm"
                   type="text"
                   name="name"
                   placeholder="Insira o nome do aluno"
@@ -344,8 +371,10 @@ const Dashboard = () => {
                   onChange={handlePersonChange}
                   required
                 />
+
                 <label htmlFor="email">Email do Aluno</label>
                 <input
+                  className="inputForm"
                   type="email"
                   name="email"
                   placeholder="Insira o email do aluno"
@@ -353,8 +382,10 @@ const Dashboard = () => {
                   onChange={handlePersonChange}
                   required
                 />
+
                 <label htmlFor="birthDate">Data de Nascimento</label>
                 <input
+                  className="inputForm"
                   type="date"
                   name="birthDate"
                   placeholder="Insira a data de nascimento"
@@ -362,6 +393,7 @@ const Dashboard = () => {
                   onChange={handlePersonChange}
                   required
                 />
+
                 <label htmlFor="school">Selecione a Escola</label>
                 <select name="school" value={person.school} onChange={handleSchoolSelect} required>
                   <option value="">Escolha uma escola</option>
@@ -371,6 +403,7 @@ const Dashboard = () => {
                     </option>
                   ))}
                 </select>
+
                 <label htmlFor="course">Selecione o Curso</label>
                 <select name="course" value={person.course} onChange={handleCourseSelect} required>
                   <option value="">Escolha um curso</option>
@@ -380,6 +413,7 @@ const Dashboard = () => {
                     </option>
                   ))}
                 </select>
+
                 <label htmlFor="classroom">Selecione a Sala</label>
                 <select name="classroom" value={person.classroom} onChange={handlePersonChange} required>
                   <option value="">Escolha uma sala</option>
@@ -389,12 +423,24 @@ const Dashboard = () => {
                     </option>
                   ))}
                 </select>
-                <button type="submit">Cadastrar Aluno</button>
+
+                {/* Campo para upload de imagem */}
+                <label class="upload" htmlFor="photo">Imagens do Rosto</label>
+                <input
+                  className="inputForm"
+                  type="file"
+                  name="photo"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  required
+                />
+
+                <button className="btCadastrarDosForm" type="submit">Cadastrar Aluno</button>
               </form>
             </div>
           )}
-
-          <button onClick={handleLogout}>Sair</button>
+          <button class="buttonFacial" onClick={handleNavigateToFacialRecognition}>Reconhecimento Facial</button>
+          <button class="buttonTerceario" onClick={handleLogout}>Sair</button>
         </div>
       </div>
     </div>

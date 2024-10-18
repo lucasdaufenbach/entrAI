@@ -21,8 +21,8 @@ const Report = () => {
           <ul>
             {reports.map((report, index) => (
               <li key={index}>
-                <strong>Escola:</strong> {report.school}, 
-                <strong> Turma:</strong> {report.classroom}, 
+                <strong>Escola:</strong> {report.school},
+                <strong> Turma:</strong> {report.classroom},
                 <strong> Pessoa:</strong> {report.person}
               </li>
             ))}
@@ -31,7 +31,7 @@ const Report = () => {
           <p>Nenhum dado cadastrado ainda.</p>
         )}
 
-        <button onClick={() => navigate('/dashboard')}>Voltar</button>
+        <button class="buttonPrimario" onClick={() => navigate('/dashboard')}>Voltar</button>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Login.css'; // Importando o CSS específico da tela de Login
+import './Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -30,10 +30,12 @@ const Login = () => {
   return (
     <div className="center">
       <div className="container">
-        <h2>Bem Vindo ao EntrAI</h2>
+        <h1>EntrAI</h1>
+        <h2>Bem Vindo</h2>
         {errorMessage && <p className="alert">{errorMessage}</p>}
         <form onSubmit={handleLogin}>
           <input
+            class="inputLogin"
             type="email"
             placeholder="Email"
             value={email}
@@ -41,16 +43,16 @@ const Login = () => {
             required
           />
           <input
+            class="inputLogin"
             type="password"
             placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type="submit">Entrar</button>
+          <button class="buttonSecundario" type="submit">Entrar</button>
         </form>
 
-        {/* Botão para redirecionar para a tela de cadastro */}
         <button className="register-btn" onClick={handleRegisterRedirect}>
           Cadastrar Email
         </button>
